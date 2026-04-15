@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Exercise3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Word Scramble Game</h1>
+
+    <div>
+        <p>Try to guess the word!</p>
+    </div>
+
+    <div style="text-align: center;" >HP: <span id="HP">3</span></div>
+
+    <h2 id="scrambledWord"></h2>
+
+    <div>
+        <input type="text" id="guess" placeholder="Enter your guess">
+    </div>
+    <br>
+
+    <button id="checkAnswer"> Check Answer</button>
+    <button id="newWord"> New Word</button>
+    <div id="result"></div>
+
+    <div class="image-container">
+        <img id="imageID" style = "display:none" alt="CharacterImage">
+    </div>
+    
+
+
+</body>
+</html>
+
+<script>
+    const words = ["Shinchan", "Doraemon", "Luffy", "Pikachu","Saitama",];
+    const img={
+        "Shinchan": "./shinchan.jpeg",
+        "Doraemon": "./doraemon.png",
+        "Luffy"   : "./luffy.webp",
+        "Pikachu" : "./pikachu.jpeg",
+        "Saitama" : "./saitama.webp",
+        "KobeBryant" :"./KobeBryant.jpg",
+        "out" :"./out.gif"
+    };
+
+    let currentWord="";
+    let healthpoint = 3;
+
+    document.getElementById("checkAnswer").addEventListener("click",checkAnswer);
+    document.getElementById("newWord").addEventListener("click",newWord);
+
+    function newWord(){
+        const randomIndex = Math.floor(Math.random() * words.length);
+        currentWord = words[randomIndex];
+        document.getElementById("scrambledWord").innerText = scrambledWord(currentWord).toLowerCase();
+
+        document.getElementById("imageID").style.display="none";
+        document.getElementById("guess").value="";
+        document.getElementById("result").innerText="";
+        if(healthpoint<=0){
+            healthpoint = 3;
+            document.getElementById("HP").innerText = healthpoint;
+            document.getElementById("checkAnswer").disabled = false;
+        }
+        
+    }
+
+    function scrambledWord(word){
+        let scrambled = word.split("");
+        for(let i=scrambled.length-1; i>0; i--){
+            const randomIndex = Math.floor(Math.random()*(i+1));
+            [scrambled[i], scrambled[randomIndex]] = [scrambled[randomIndex], scrambled[i]];
+        }
+        return scrambled.join("");
+    }
+
+    function checkAnswer(){
+        const userGuess = document.getElementById("guess").value;
+        const resultDiv = document.getElementById("result");
+        const imgElement = document.getElementById("imageID");
+        const hp = document.getElementById("HP");
+        
+
+        if(userGuess.toLowerCase()=== currentWord.toLowerCase()){
+            resultDiv.innerText = "Correct! Well done!";
+            imgElement.src = img[currentWord];
+            imgElement.style.display = "block";
+            
+        }
+        else if(userGuess.toLowerCase()=="kobebryant"||userGuess.toLowerCase()=="kobe"){
+            resultDiv.innerText = "Man! What can I say! You found me!";
+            imgElement.src = "./KobeBryant.jpg";
+            imgElement.style.display = "block";
+        }
+        else{
+            resultDiv.innerText = "Wrong! Try again.";
+            healthpoint--;
+            hp.innerText = healthpoint;
+            if(healthpoint <= 0){
+                resultDiv.innerText = "Game Over! Mamba out!";
+                document.getElementById("checkAnswer").disabled = true;
+                imgElement.src = "./out.gif";
+                imgElement.style.display = "block";
+            }
+            }
+    }
+    newWord();
+</script>
